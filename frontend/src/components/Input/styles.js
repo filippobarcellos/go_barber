@@ -13,6 +13,12 @@ export const Container = styled.div`
   align-items: center;
 
   ${(props) =>
+    props.hasError &&
+    css`
+      border-color: #c53030;
+    `}
+
+  ${(props) =>
     props.isFocused &&
     css`
       border-color: #ff9000;
@@ -24,6 +30,7 @@ export const Container = styled.div`
     css`
       color: #ff9000;
     `}
+
 
   & + div {
     margin-top: 8px;
@@ -39,4 +46,11 @@ export const Container = styled.div`
   svg {
     margin-right: 16px;
   }
+`;
+
+export const Error = styled.span`
+  font-size: 12px;
+  color: #c53030;
+  margin-top: 8px;
+  margin-bottom: 8px;
 `;

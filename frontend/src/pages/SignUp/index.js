@@ -28,12 +28,17 @@ const SignUp = () => {
     async (e) => {
       e.preventDefault();
       try {
+        setErrors(null);
+
         const schema = Yup.object().shape({
           name: Yup.string().required('Name is required'),
           email: Yup.string()
             .email('Please type a valid email')
             .required('Email is required'),
-          password: Yup.string().min(6, 'Password must be at least 6 carac'),
+          password: Yup.string().min(
+            6,
+            'Password must be at least 6 characters'
+          ),
         });
 
         await schema.validate(formData, {

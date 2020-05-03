@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 
-import { Container } from './styles';
+import { Container, Error } from './styles';
 
 const Input = ({ icon: Icon, error, ...rest }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -18,16 +18,18 @@ const Input = ({ icon: Icon, error, ...rest }) => {
   }, []);
 
   return (
-    <Container isFocused={isFocused} isFilled={isFilled}>
-      {Icon && <Icon />}
-      <input
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        ref={inputRef}
-        {...rest}
-      />
-      {error}
-    </Container>
+    <>
+      <Container hasError={!!error} isFocused={isFocused} isFilled={isFilled}>
+        {Icon && <Icon />}
+        <input
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          ref={inputRef}
+          {...rest}
+        />
+      </Container>
+      {error && <Error>{error}</Error>}
+    </>
   );
 };
 
