@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Container } from './styles';
+import { ButtonStyled } from './styles';
 
 const Button = ({ children, ...rest }) => (
-  <Container type="button" {...rest}>
+  <ButtonStyled type="button" {...rest}>
     {children}
-  </Container>
+  </ButtonStyled>
 );
 
 Button.propTypes = {

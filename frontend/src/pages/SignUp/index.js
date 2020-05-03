@@ -1,6 +1,8 @@
-import React from 'react';
-import { Form } from '@unform/web';
+import React, { useState, useCallback } from 'react';
 import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
+import * as Yup from 'yup';
+
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import logo from '../../assets/logo.svg';
 
@@ -10,9 +12,40 @@ import Button from '../../components/Button';
 import { Container, Content, Background } from './styles';
 
 const SignUp = () => {
-  function handleSubmit(data) {
-    console.log(data);
-  }
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+  });
+
+  const [errors, setErrors] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      try {
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Name is required'),
+          email: Yup.string()
+            .email('Please type a valid email')
+            .required('Email is required'),
+          password: Yup.string().min(6, 'Password must be at least 6 carac'),
+        });
+
+        await schema.validate(formData, {
+          abortEarly: false,
+        });
+      } catch (err) {
+        const errors = getValidationErrors(err);
+        setErrors(errors);
+      }
+    },
+    [formData]
+  );
 
   return (
     <Container>
@@ -20,19 +53,35 @@ const SignUp = () => {
       <Content>
         <img src={logo} alt="GoBarber" />
 
-        <Form onSubmit={handleSubmit}>
-          <Input name="user" icon={FiUser} placeholder="Name" />
-          <Input name="email" icon={FiMail} placeholder="E-mail" />
+        <form onSubmit={handleSubmit}>
+          <Input
+            name="name"
+            icon={FiUser}
+            type="text"
+            placeholder="Name"
+            onChange={(e) => handleChange(e)}
+            error={errors && errors.name}
+          />
+          <Input
+            name="email"
+            icon={FiMail}
+            type="text"
+            placeholder="E-mail"
+            onChange={(e) => handleChange(e)}
+            error={errors && errors.email}
+          />
 
           <Input
             name="password"
             icon={FiLock}
             type="password"
             placeholder="Password"
+            onChange={(e) => handleChange(e)}
+            error={errors && errors.password}
           />
 
           <Button type="submit">Register</Button>
-        </Form>
+        </form>
 
         <a href="/login">
           <FiArrowLeft />

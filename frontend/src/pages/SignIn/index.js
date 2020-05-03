@@ -14,17 +14,10 @@ const SignIn = () => (
       <img src={logo} alt="GoBarber" />
 
       <form>
-        <Input name="email" icon={FiMail} placeholder="E-mail" />
+        <Input name="email" placeholder="Email" icon={FiMail} />
+        <Input name="password" placeholder="Password" icon={FiLock} />
 
-        <Input
-          name="password"
-          icon={FiLock}
-          type="password"
-          placeholder="Password"
-        />
-
-        <Button type="submit">Login</Button>
-
+        <Button>Login</Button>
         <a href="/forgot">Forgot you password?</a>
       </form>
 
