@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useContext } from 'react';
 import * as Yup from 'yup';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 
-import { signIn } from '../../store/Auth/actions';
+import { AuthContext } from '../../context/AuthContext';
+import { ToastContext } from '../../context/ToastContext';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -20,10 +20,10 @@ const SignIn = () => {
     password: '',
   });
 
-  const { email, password } = formData;
   const [errors, setErrors] = useState(null);
 
-  const dispatch = useDispatch();
+  const { signIn } = useContext(AuthContext);
+  const { addToast } = useContext(ToastContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,23 +40,31 @@ const SignIn = () => {
           email: Yup.string()
             .email('Please type a valid email')
             .required('Email is required'),
-          password: Yup.string().min(
-            6,
-            'Password must be at least 6 characters'
-          ),
+          password: Yup.string().required('Password is required'),
         });
 
         await schema.validate(formData, {
           abortEarly: false,
         });
 
-        dispatch(signIn(email, password));
+        await signIn({
+          email: formData.email,
+          password: formData.password,
+        });
       } catch (err) {
-        const errors = getValidationErrors(err);
-        setErrors(errors);
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          setErrors(errors);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Something went wrong',
+          description: 'Please check your email/password',
+        });
       }
     },
-    [formData, dispatch]
+    [formData, signIn, addToast]
   );
 
   return (
