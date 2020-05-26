@@ -1,28 +1,31 @@
-import React, { useState, useCallback } from 'react';
-import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
-import * as Yup from 'yup';
+import React, { useState, useCallback } from "react";
+import { FiMail, FiLock, FiUser } from "react-icons/fi";
+import * as Yup from "yup";
 
-import getValidationErrors from '../../utils/getValidationErrors';
+import getValidationErrors from "../../utils/getValidationErrors";
 
-import logo from '../../assets/logo.svg';
+import Input from "../../components/Input";
+import Button from "../../components/Button";
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import logo from "../../assets/logo.svg";
 
-import { Container, Content, Background } from './styles';
+import { Container, Content, Background } from "./styles";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
+    name: "",
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState(null);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = useCallback(
+    (e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+    },
+    [formData]
+  );
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -30,23 +33,22 @@ const SignUp = () => {
       try {
         setErrors(null);
 
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Name is required'),
+        const signUpSchema = Yup.object().shape({
+          name: Yup.string().required("Name is required"),
           email: Yup.string()
-            .email('Please type a valid email')
-            .required('Email is required'),
+            .email("Email is not a valid email")
+            .required("Email is required"),
           password: Yup.string().min(
             6,
-            'Password must be at least 6 characters'
+            "Password must be at least 6 carachaters"
           ),
         });
 
-        await schema.validate(formData, {
-          abortEarly: false,
-        });
+        await signUpSchema.validate(formData, { abortEarly: false });
       } catch (err) {
-        const errors = getValidationErrors(err);
-        setErrors(errors);
+        const error = getValidationErrors(err);
+
+        setErrors(error);
       }
     },
     [formData]
@@ -56,41 +58,41 @@ const SignUp = () => {
     <Container>
       <Background />
       <Content>
-        <img src={logo} alt="GoBarber" />
+        <img src={logo} alt="Go Barber" />
 
         <form onSubmit={handleSubmit}>
+          <h1>Register</h1>
           <Input
+            type="text"
             name="name"
             icon={FiUser}
-            type="text"
             placeholder="Name"
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             error={errors && errors.name}
           />
           <Input
+            type="text"
             name="email"
             icon={FiMail}
-            type="text"
             placeholder="E-mail"
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             error={errors && errors.email}
           />
-
           <Input
+            type="password"
             name="password"
             icon={FiLock}
-            type="password"
             placeholder="Password"
-            onChange={(e) => handleChange(e)}
+            onChange={handleChange}
             error={errors && errors.password}
           />
 
           <Button type="submit">Register</Button>
         </form>
 
-        <a href="/login">
-          <FiArrowLeft />
-          Go back to Login
+        <a href="">
+          <FiUser />
+          Already have a account?
         </a>
       </Content>
     </Container>

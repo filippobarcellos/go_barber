@@ -1,107 +1,92 @@
-import React, { useState, useCallback, useContext } from 'react';
-import * as Yup from 'yup';
-import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
+import React, { useState, useCallback } from "react";
+import { FiLogIn, FiMail, FiLock } from "react-icons/fi";
+import * as Yup from "yup";
 
-import { AuthContext } from '../../context/AuthContext';
-import { ToastContext } from '../../context/ToastContext';
+import getValidationErrors from "../../utils/getValidationErrors";
 
-import getValidationErrors from '../../utils/getValidationErrors';
+import Input from "../../components/Input";
+import Button from "../../components/Button";
 
-import logo from '../../assets/logo.svg';
+import logo from "../../assets/logo.svg";
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import { Container, Content, Background } from "./styles";
 
-import { Container, Content, Background } from './styles';
-
-const SignIn = () => {
+function SignIn() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState(null);
 
-  const { signIn } = useContext(AuthContext);
-  const { addToast } = useContext(ToastContext);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      try {
-        setErrors(null);
-
-        const schema = Yup.object().shape({
-          email: Yup.string()
-            .email('Please type a valid email')
-            .required('Email is required'),
-          password: Yup.string().required('Password is required'),
-        });
-
-        await schema.validate(formData, {
-          abortEarly: false,
-        });
-
-        await signIn({
-          email: formData.email,
-          password: formData.password,
-        });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
-          const errors = getValidationErrors(err);
-          setErrors(errors);
-        }
-
-        addToast({
-          type: 'error',
-          title: 'Something went wrong',
-          description: 'Please check your email/password',
-        });
-      }
+  const handleChange = useCallback(
+    (e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
     },
-    [formData, signIn, addToast]
+    [formData]
   );
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+
+    try {
+      setErrors(null);
+
+      const signInSchema = Yup.object().shape({
+        email: Yup.string()
+          .email("Email is not a valid email")
+          .required("Email is required"),
+        password: Yup.string().min(
+          6,
+          "Password must be at least 6 carachaters"
+        ),
+      });
+
+      await signInSchema.validate(formData, { abortEarly: false });
+    } catch (err) {
+      const error = getValidationErrors(err);
+
+      setErrors(error);
+    }
+  }, []);
 
   return (
     <Container>
       <Content>
-        <img src={logo} alt="GoBarber" />
+        <img src={logo} alt="Go Barber" />
 
         <form onSubmit={handleSubmit}>
+          <h1>Login</h1>
           <Input
+            type="email"
             name="email"
-            type="text"
-            placeholder="Email"
             icon={FiMail}
-            onChange={(e) => handleChange(e)}
+            placeholder="E-mail"
+            onChange={handleChange}
             error={errors && errors.email}
           />
           <Input
-            name="password"
             type="password"
-            placeholder="Password"
+            name="password"
             icon={FiLock}
-            onChange={(e) => handleChange(e)}
+            placeholder="Password"
+            onChange={handleChange}
             error={errors && errors.password}
           />
 
           <Button type="submit">Login</Button>
-          <a href="/forgot">Forgot you password?</a>
+
+          <a href="/">Forgot my password</a>
         </form>
 
-        <a href="/login">
+        <a href="">
           <FiLogIn />
-          Register
+          Create your account
         </a>
       </Content>
       <Background />
     </Container>
   );
-};
+}
 
 export default SignIn;

@@ -1,18 +1,20 @@
-import styled from 'styled-components';
-import { shade } from 'polished';
+import styled from "styled-components";
+import { shade } from "polished";
 
 export const ButtonStyled = styled.button`
-  height: 56px;
-  padding: 0 16px;
-  margin-top: 16px;
   background: #ff9000;
-  border: 0;
-  border-radius: 8px;
   color: #312e38;
+  height: 56px;
+  border-radius: 10px;
+  border: 0;
+  padding: 0 16px;
   font-weight: 500;
-  transition: background 0.2s;
+  margin-top: 16px;
+  width: 100%;
+  transition: background-color 0.2s;
+  cursor: pointer;
 
   &:hover {
-    background: ${shade(0.2, '#ff9000')};
+    background: ${shade(0.2, "#ff9000")};
   }
 `;

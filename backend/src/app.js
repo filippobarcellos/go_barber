@@ -1,14 +1,16 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
 
-const connectDB = require('./config/database');
-const routes = require('./routes');
+import routes from './routes';
+import connection from './config/database';
+import uploadConfig from './config/upload';
 
 const app = express();
-connectDB();
 
-app.use(cors());
+// connect database
+connection();
+
 app.use(express.json());
 app.use(routes);
+app.use('/files', express.static(uploadConfig.directory));
 
-module.exports = app;
+export default app;

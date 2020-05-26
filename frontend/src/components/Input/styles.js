@@ -1,28 +1,25 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 export const Container = styled.div`
-  width: 100%;
   background: #232129;
-  border-radius: 8px;
-  padding: 16px;
-
-  border: 2px solid #232129;
   color: #666360;
+  border-radius: 10px;
+  border: 2px solid #232129;
+  padding: 16px;
+  width: 100%;
 
   display: flex;
   align-items: center;
 
-  ${(props) =>
-    props.hasError &&
-    css`
-      border-color: #c53030;
-    `}
+  & + div {
+    margin-top: 8px;
+  }
 
   ${(props) =>
     props.isFocused &&
     css`
-      border-color: #ff9000;
       color: #ff9000;
+      border-color: #ff9000;
     `}
 
   ${(props) =>
@@ -31,16 +28,18 @@ export const Container = styled.div`
       color: #ff9000;
     `}
 
-
-  & + div {
-    margin-top: 8px;
-  }
+  ${(props) =>
+    props.isErrored &&
+    css`
+      border-color: #c53030;
+    `}
 
   input {
     flex: 1;
-    border: 0;
     background: transparent;
+    border: 0;
     color: #f4ede8;
+    outline: none;
   }
 
   svg {
@@ -49,8 +48,7 @@ export const Container = styled.div`
 `;
 
 export const Error = styled.span`
-  font-size: 12px;
   color: #c53030;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  display: inline-block;
+  margin: 12px 0 12px 0;
 `;

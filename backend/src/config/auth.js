@@ -1,4 +1,4 @@
-module.exports = {
-  secret: 'gobarbertokensecret',
+export default {
+  secret: 'gobarber',
   expiresIn: '7d',
 };

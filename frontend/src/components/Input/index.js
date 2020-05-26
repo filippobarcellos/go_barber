@@ -1,29 +1,29 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from "react";
 
-import { Container, Error } from './styles';
+import { Container, Error } from "./styles";
 
-const Input = ({ icon: Icon, error, ...rest }) => {
+function Input({ error, icon: Icon, ...rest }) {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
   const inputRef = useRef(null);
 
-  const handleInputFocus = useCallback(() => {
+  const handleFocus = useCallback(() => {
     setIsFocused(true);
   }, []);
 
-  const handleInputBlur = useCallback(() => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
     setIsFilled(!!inputRef.current.value);
   }, []);
 
   return (
     <>
-      <Container hasError={!!error} isFocused={isFocused} isFilled={isFilled}>
-        {Icon && <Icon />}
+      <Container isErrored={!!error} isFocused={isFocused} isFilled={isFilled}>
+        {Icon && <Icon size={20} />}
         <input
-          onFocus={handleInputFocus}
-          onBlur={handleInputBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           ref={inputRef}
           {...rest}
         />
@@ -31,6 +31,6 @@ const Input = ({ icon: Icon, error, ...rest }) => {
       {error && <Error>{error}</Error>}
     </>
   );
-};
+}
 
 export default Input;

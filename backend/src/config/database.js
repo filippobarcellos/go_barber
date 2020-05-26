@@ -1,14 +1,19 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const connectDB = async () => {
+const connection = async () => {
   try {
     await mongoose.connect(
-      'mongodb+srv://fbarcellos:18081990@cluster0-ukzai.mongodb.net/goBarber?retryWrites=true&w=majority',
-      { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true },
+      'mongodb+srv://filippo:18081990@cluster0-ukzai.mongodb.net/gobarber?retryWrites=true&w=majority',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+      }
     );
   } catch (err) {
-    return res.status(500).json({ err: 'Server is not available' });
+    console.log(err.message);
+    process.exit(1);
   }
 };
 
-module.exports = connectDB;
+export default connection;
