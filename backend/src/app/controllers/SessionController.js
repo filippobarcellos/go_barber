@@ -10,11 +10,11 @@ exports.createSession = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error('Incorrect email/password');
+    return res.status(401).json({ error: 'Incorrect email/password' });
   }
 
   if (!(await user.checkPassword(password))) {
-    throw new Error('Incorrect email/password');
+    return res.status(401).json({ error: 'Incorrect email/password' });
   }
 
   const { id, name } = user;

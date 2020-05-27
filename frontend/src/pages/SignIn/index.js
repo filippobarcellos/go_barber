@@ -1,6 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import { FiLogIn, FiMail, FiLock } from "react-icons/fi";
 import * as Yup from "yup";
+
+import { AuthContext } from "../../context/AuthContext";
 
 import getValidationErrors from "../../utils/getValidationErrors";
 
@@ -19,6 +21,8 @@ function SignIn() {
 
   const [errors, setErrors] = useState(null);
 
+  const { user, signIn } = useContext(AuthContext);
+
   const handleChange = useCallback(
     (e) => {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,29 +30,34 @@ function SignIn() {
     [formData]
   );
 
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    try {
-      setErrors(null);
+      try {
+        setErrors(null);
 
-      const signInSchema = Yup.object().shape({
-        email: Yup.string()
-          .email("Email is not a valid email")
-          .required("Email is required"),
-        password: Yup.string().min(
-          6,
-          "Password must be at least 6 carachaters"
-        ),
-      });
+        const signInSchema = Yup.object().shape({
+          email: Yup.string()
+            .email("Email is not a valid email")
+            .required("Email is required"),
+          password: Yup.string().min(
+            4,
+            "Password must be at least 4 carachaters"
+          ),
+        });
 
-      await signInSchema.validate(formData, { abortEarly: false });
-    } catch (err) {
-      const error = getValidationErrors(err);
+        await signInSchema.validate(formData, { abortEarly: false });
 
-      setErrors(error);
-    }
-  }, []);
+        signIn(formData);
+      } catch (err) {
+        const error = getValidationErrors(err);
+
+        setErrors(error);
+      }
+    },
+    [formData, signIn]
+  );
 
   return (
     <Container>
