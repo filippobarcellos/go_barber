@@ -1,27 +1,29 @@
-import React, { useState, useCallback, useContext } from "react";
-import { FiLogIn, FiMail, FiLock } from "react-icons/fi";
-import * as Yup from "yup";
+import React, { useState, useCallback, useContext } from 'react';
+import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
+import * as Yup from 'yup';
 
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from '../../context/AuthContext';
+import { ToastContext } from '../../context/ToastContext';
 
-import getValidationErrors from "../../utils/getValidationErrors";
+import getValidationErrors from '../../utils/getValidationErrors';
 
-import Input from "../../components/Input";
-import Button from "../../components/Button";
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
-import logo from "../../assets/logo.svg";
+import logo from '../../assets/logo.svg';
 
-import { Container, Content, Background } from "./styles";
+import { Container, Content, Background } from './styles';
 
 function SignIn() {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState(null);
 
   const { user, signIn } = useContext(AuthContext);
+  const { addToast } = useContext(ToastContext);
 
   const handleChange = useCallback(
     (e) => {
@@ -39,21 +41,24 @@ function SignIn() {
 
         const signInSchema = Yup.object().shape({
           email: Yup.string()
-            .email("Email is not a valid email")
-            .required("Email is required"),
+            .email('Email is not a valid email')
+            .required('Email is required'),
           password: Yup.string().min(
             4,
-            "Password must be at least 4 carachaters"
+            'Password must be at least 4 carachaters'
           ),
         });
 
         await signInSchema.validate(formData, { abortEarly: false });
 
-        signIn(formData);
+        await signIn(formData);
       } catch (err) {
-        const error = getValidationErrors(err);
+        if (err instanceof Yup.ValidationError) {
+          const error = getValidationErrors(err);
+          setErrors(error);
+        }
 
-        setErrors(error);
+        addToast();
       }
     },
     [formData, signIn]
