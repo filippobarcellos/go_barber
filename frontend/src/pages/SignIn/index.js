@@ -1,9 +1,7 @@
-import React, { useState, useCallback, useContext } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import * as Yup from 'yup';
-
-import { AuthContext } from '../../context/AuthContext';
-import { ToastContext } from '../../context/ToastContext';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -11,6 +9,8 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import logo from '../../assets/logo.svg';
+
+import { signIn } from '../../store/Auth/authSlice';
 
 import { Container, Content, Background } from './styles';
 
@@ -22,8 +22,9 @@ function SignIn() {
 
   const [errors, setErrors] = useState(null);
 
-  const { user, signIn } = useContext(AuthContext);
-  const { addToast } = useContext(ToastContext);
+  const { email, password } = formData;
+
+  const dispatch = useDispatch();
 
   const handleChange = useCallback(
     (e) => {
@@ -51,17 +52,15 @@ function SignIn() {
 
         await signInSchema.validate(formData, { abortEarly: false });
 
-        await signIn(formData);
+        dispatch(signIn({ email, password }));
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
           setErrors(error);
         }
-
-        addToast();
       }
     },
-    [formData, signIn]
+    [formData]
   );
 
   return (
