@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useContext } from 'react';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import * as Yup from 'yup';
+import { Link, useHistory } from 'react-router-dom';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -10,7 +10,8 @@ import Button from '../../components/Button';
 
 import logo from '../../assets/logo.svg';
 
-import { signIn } from '../../store/Auth/authSlice';
+import { AuthContext } from '../../context/AuthContext';
+import { ToastContext } from '../../context/ToastContext';
 
 import { Container, Content, Background } from './styles';
 
@@ -19,12 +20,12 @@ function SignIn() {
     email: '',
     password: '',
   });
-
   const [errors, setErrors] = useState(null);
 
-  const { email, password } = formData;
+  const { signIn } = useContext(AuthContext);
+  const { addToast } = useContext(ToastContext);
 
-  const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleChange = useCallback(
     (e) => {
@@ -52,15 +53,26 @@ function SignIn() {
 
         await signInSchema.validate(formData, { abortEarly: false });
 
-        dispatch(signIn({ email, password }));
+        history.push('/dashboard');
+
+        await signIn({
+          email: formData.email,
+          password: formData.password,
+        });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const error = getValidationErrors(err);
           setErrors(error);
         }
+
+        addToast({
+          type: 'error',
+          title: 'Erro na autenticacao',
+          description: 'Ocorreu um erro ao fazer login',
+        });
       }
     },
-    [formData]
+    [formData, signIn, addToast]
   );
 
   return (
@@ -89,13 +101,13 @@ function SignIn() {
 
           <Button type="submit">Login</Button>
 
-          <a href="/">Forgot my password</a>
+          <Link to="/register">Forgot my password</Link>
         </form>
 
-        <a href="">
+        <Link to="/register">
           <FiLogIn />
           Create your account
-        </a>
+        </Link>
       </Content>
       <Background />
     </Container>

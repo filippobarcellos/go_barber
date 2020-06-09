@@ -49,3 +49,32 @@ exports.updateAvatar = async (req, res) => {
     return res.status(400).json({ error: err.message });
   }
 };
+
+exports.updateUser = async (req, res) => {
+  const { email, oldPassword } = req.body;
+
+  const user = await User.findById(req.userId);
+
+  if (!user) {
+    return res.status(400).json({ error: 'User was not found' });
+  }
+
+  if (email !== user.email) {
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+  }
+
+  if (oldPassword && !(await user.checkPassword(oldPassword))) {
+    return res.status(401).json({ error: 'Password does not match' });
+  }
+
+  const { id, name } = await user.updateOne(req.body);
+  return res.json({
+    id,
+    name,
+    email,
+  });
+};

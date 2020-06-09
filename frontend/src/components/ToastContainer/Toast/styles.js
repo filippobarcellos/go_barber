@@ -1,4 +1,5 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
+import { animated } from 'react-spring';
 
 const toastTypeVariations = {
   info: css`
@@ -15,15 +16,7 @@ const toastTypeVariations = {
   `,
 };
 
-export const Container = styled.div`
-  position: absolute;
-  right: 0%;
-  top: 0;
-  padding: 30px;
-  overflow: hidden;
-`;
-
-export const Toast = styled.div`
+export const StyledToast = styled(animated.div)`
   width: 360px;
   position: relative;
   padding: 16px 30px 16px 16px;
@@ -36,7 +29,7 @@ export const Toast = styled.div`
     margin-top: 8px;
   }
 
-  ${(props) => toastTypeVariations[props.type || "info"]}
+  ${(props) => toastTypeVariations[props.type || 'info']}
 
   > svg {
     margin: 4px 12px 0 0;

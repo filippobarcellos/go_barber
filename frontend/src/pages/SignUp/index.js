@@ -1,24 +1,31 @@
-import React, { useState, useCallback } from "react";
-import { FiMail, FiLock, FiUser } from "react-icons/fi";
-import * as Yup from "yup";
+import React, { useState, useCallback, useContext } from 'react';
+import { FiMail, FiLock, FiUser } from 'react-icons/fi';
+import * as Yup from 'yup';
+import { Link, useHistory } from 'react-router-dom';
+import api from '../../services/api';
 
-import getValidationErrors from "../../utils/getValidationErrors";
+import getValidationErrors from '../../utils/getValidationErrors';
 
-import Input from "../../components/Input";
-import Button from "../../components/Button";
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
-import logo from "../../assets/logo.svg";
+import logo from '../../assets/logo.svg';
 
-import { Container, Content, Background } from "./styles";
+import { ToastContext } from '../../context/ToastContext';
+
+import { Container, Content, Background } from './styles';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
+    name: '',
+    email: '',
+    password: '',
   });
 
   const [errors, setErrors] = useState(null);
+
+  const { addToast } = useContext(ToastContext);
+  const history = useHistory();
 
   const handleChange = useCallback(
     (e) => {
@@ -34,17 +41,27 @@ const SignUp = () => {
         setErrors(null);
 
         const signUpSchema = Yup.object().shape({
-          name: Yup.string().required("Name is required"),
+          name: Yup.string().required('Name is required'),
           email: Yup.string()
-            .email("Email is not a valid email")
-            .required("Email is required"),
+            .email('Email is not a valid email')
+            .required('Email is required'),
           password: Yup.string().min(
             6,
-            "Password must be at least 6 carachaters"
+            'Password must be at least 6 carachaters'
           ),
         });
 
         await signUpSchema.validate(formData, { abortEarly: false });
+
+        await api.post('/users', formData);
+
+        history.push('/');
+
+        addToast({
+          type: 'success',
+          title: 'User was created',
+          description: 'Please login in your account',
+        });
       } catch (err) {
         const error = getValidationErrors(err);
 
@@ -90,10 +107,10 @@ const SignUp = () => {
           <Button type="submit">Register</Button>
         </form>
 
-        <a href="">
+        <Link to="/">
           <FiUser />
           Already have a account?
-        </a>
+        </Link>
       </Content>
     </Container>
   );
