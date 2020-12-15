@@ -1,17 +1,15 @@
 import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
-import { animated } from 'react-spring';
 
-import signInBgImg from '../../assets/sign-in-background.png';
+import BgImg from '../../../assets/background.png';
 
 export const Container = styled.div`
   height: 100vh;
-
   display: flex;
   align-items: stretch;
 `;
 
-const showFromLeft = keyframes`
+const appearFromLeft = keyframes`
   from {
     opacity: 0;
     transform: translateX(-50px);
@@ -31,7 +29,7 @@ export const Content = styled.div`
   align-items: center;
   justify-content: center;
 
-  animation: ${showFromLeft} 1s;
+  animation: ${appearFromLeft} 1s;
 
   form {
     margin: 80px 0;
@@ -74,6 +72,6 @@ export const Content = styled.div`
 
 export const Background = styled.div`
   flex: 1;
-  background: url(${signInBgImg}) no-repeat center;
+  background: url(${BgImg}) no-repeat center;
   background-size: cover;
 `;
