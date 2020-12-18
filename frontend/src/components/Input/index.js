@@ -1,36 +1,36 @@
-import React, { useState, useCallback, useRef } from "react";
+import { useState, forwardRef } from 'react';
+import { FiAlertCircle } from 'react-icons/fi';
+import * as S from './styles';
 
-import { Container, Error } from "./styles";
+const Input = forwardRef((props, ref) => {
+  const { icon: Icon, type, placeholder, name, error, isDirty } = props;
 
-function Input({ error, icon: Icon, ...rest }) {
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
-  const inputRef = useRef(null);
-
-  const handleFocus = useCallback(() => {
-    setIsFocused(true);
-  }, []);
-
-  const handleBlur = useCallback(() => {
+  const handleFocus = () => {
     setIsFocused(false);
-    setIsFilled(!!inputRef.current.value);
-  }, []);
+    setIsFilled(!!isDirty);
+  };
 
   return (
-    <>
-      <Container isErrored={!!error} isFocused={isFocused} isFilled={isFilled}>
-        {Icon && <Icon size={20} />}
-        <input
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          ref={inputRef}
-          {...rest}
-        />
-      </Container>
-      {error && <Error>{error}</Error>}
-    </>
+    <S.Container isFocused={isFocused} isFilled={isFilled} error={error}>
+      {Icon && <Icon size={20} />}
+      <S.Input
+        onFocus={() => setIsFocused(true)}
+        onBlur={handleFocus}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        ref={ref}
+      />
+      {error && (
+        <S.Error text={error.message}>
+          <FiAlertCircle size={20} />
+        </S.Error>
+      )}
+    </S.Container>
   );
-}
+});
 
 export default Input;

@@ -1,27 +1,21 @@
-import React, { useContext } from 'react';
-import { Route as ReactDOMRoute, Redirect } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { Route as RouteDOM, Redirect } from 'react-router-dom';
+import { useAuth } from '../context/useAuth';
 
-const Route = ({ component: Component, isPrivate = false, ...rest }) => {
-  const { user } = useContext(AuthContext);
+function Route({ isPrivate = false, component: Component, ...rest }) {
+  const { user } = useAuth();
 
   return (
-    <ReactDOMRoute
+    <RouteDOM
       {...rest}
-      render={(location) => {
+      render={() => {
         return isPrivate === !!user ? (
           <Component />
         ) : (
-          <Redirect
-            to={{
-              pathname: isPrivate ? '/' : '/dashboard',
-              state: { referrer: location },
-            }}
-          />
+          <Redirect to={{ pathname: isPrivate ? '/' : '/dashboard' }} />
         );
       }}
     />
   );
-};
+}
 
 export default Route;

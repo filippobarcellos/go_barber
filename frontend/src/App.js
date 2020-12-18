@@ -1,20 +1,20 @@
-import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './context/useAuth';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Routes from './routes';
 
 import GlobalStyle from './styles/global';
 
-import Routes from './routes';
-
-import AppProvider from './context';
-
 function App() {
   return (
-    <AppProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes />
-        <GlobalStyle />
-      </BrowserRouter>
-    </AppProvider>
+      </AuthProvider>
+      <GlobalStyle />
+      <ToastContainer />
+    </BrowserRouter>
   );
 }
 

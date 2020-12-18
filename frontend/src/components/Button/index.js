@@ -1,9 +1,9 @@
-import React from "react";
+import * as S from './styles';
 
-import { ButtonStyled } from "./styles.js";
-
-function Button({ children, ...rest }) {
-  return <ButtonStyled {...rest}>{children}</ButtonStyled>;
+function Button({ children, ...props }) {
+  return (
+    <S.Button {...props}>{children}</S.Button>
+  )
 }
 
 export default Button;
