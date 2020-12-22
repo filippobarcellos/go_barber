@@ -14,7 +14,12 @@ const Input = forwardRef((props, ref) => {
   };
 
   return (
-    <S.Container isFocused={isFocused} isFilled={isFilled} error={error}>
+    <S.Container
+      isFocused={isFocused}
+      isFilled={isFilled}
+      error={error}
+      style={props.containerStyle}
+    >
       {Icon && <Icon size={20} />}
       <S.Input
         onFocus={() => setIsFocused(true)}

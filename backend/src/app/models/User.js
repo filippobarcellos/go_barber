@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import localhostConfig from '../../config/localhost';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -14,17 +15,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    resetPasswordToken: {
-      type: String,
-      required: false,
-    },
-    resetPasswordExpires: {
-      type: Date,
-      required: false,
-    },
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
 
@@ -38,9 +33,8 @@ UserSchema.methods.checkPassword = function (requestedPassword) {
   return bcrypt.compare(requestedPassword, this.password);
 };
 
-UserSchema.methods.generatePasswordRequest = function () {
-  this.resetPasswordToken = crypto.randomBytes(20).toString('hex');
-  this.resetPasswordToken = Date.now() + 3600000;
-};
+UserSchema.virtual('avatar_url').get(function () {
+  return `http://${localhostConfig.LOCALHOST}:3333/files/${this.avatar}`;
+});
 
 export default mongoose.model('User', UserSchema);

@@ -10,6 +10,8 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('@gobarber:token');
     const user = localStorage.getItem('@gobarber:user');
 
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+
     if (token && user) {
       return { token, user: JSON.parse(user) };
     }
@@ -25,6 +27,8 @@ export const AuthProvider = ({ children }) => {
 
     const { token, user } = response.data;
 
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+
     localStorage.setItem('@gobarber:token', token);
     localStorage.setItem('@gobarber:user', JSON.stringify(user));
 
@@ -38,8 +42,19 @@ export const AuthProvider = ({ children }) => {
     setData({});
   };
 
+  const updateUser = (user) => {
+    localStorage.setItem('@gobarber:user', JSON.stringify(user));
+
+    setData({
+      token: data.token,
+      user,
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ login, logout, user: data.user }}>
+    <AuthContext.Provider
+      value={{ login, logout, user: data.user, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
