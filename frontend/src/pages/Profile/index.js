@@ -1,5 +1,6 @@
 import { useAuth } from '../../context/useAuth';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FiMail, FiLock, FiUser, FiCamera, FiArrowLeft } from 'react-icons/fi';
 import { toast } from 'react-toastify';
@@ -9,23 +10,25 @@ import * as S from './styles';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
-import { Link } from 'react-router-dom';
 
 const schema = yup.object().shape({
+  name: yup.string().required(),
   email: yup.string().email().required(),
-  password: yup.string().required(),
+  password: yup.string().when('password_confirmation', {
+    is: (val) => !!val.length,
+    then: yup.string().required(),
+    otherwise: yup.string(),
+  }),
+  password_confirmation: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Password does not match.'),
 });
 
 function Profile() {
   const { user, updateUser } = useAuth();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isDirty },
-    errors,
-  } = useForm({
-    mode: 'onChange',
+  const { register, handleSubmit, errors } = useForm({
+    mode: 'onBlur',
     resolver: yupResolver(schema),
     defaultValues: {
       name: user.name,
@@ -33,9 +36,22 @@ function Profile() {
     },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async ({ name, email, password, password_confirmation }) => {
+    const formData = Object.assign(
+      {
+        name,
+        email,
+      },
+      password
+        ? {
+            password,
+            password_confirmation,
+          }
+        : {}
+    );
+
     try {
-      console.log(data);
+      console.log(formData);
     } catch (error) {
       toast.error('Something went wrong. Please check your credentials');
     }
@@ -68,8 +84,9 @@ function Profile() {
             <S.AvatarInput>
               <img
                 src={
-                  user.avatar_url ||
-                  `https://eu.ui-avatars.com/api/?name=${user.name}`
+                  user.avatar
+                    ? `http://localhost:3333/files/${user.avatar}`
+                    : `https://eu.ui-avatars.com/api/?name=${user.name}`
                 }
                 alt={user.name}
               />
@@ -83,6 +100,7 @@ function Profile() {
                 />
               </label>
             </S.AvatarInput>
+
             <h2>Profile</h2>
 
             <Input
@@ -91,7 +109,6 @@ function Profile() {
               placeholder="Name"
               icon={FiUser}
               ref={register}
-              isDirty={isDirty}
               error={errors.email}
             />
 
@@ -101,19 +118,7 @@ function Profile() {
               placeholder="Email"
               icon={FiMail}
               ref={register}
-              isDirty={isDirty}
               error={errors.email}
-            />
-
-            <Input
-              type="old_password"
-              name="password"
-              placeholder="Current Password"
-              icon={FiLock}
-              ref={register}
-              isDirty={isDirty}
-              error={errors.old_password}
-              containerStyle={{ marginTop: 24 }}
             />
 
             <Input
@@ -122,18 +127,17 @@ function Profile() {
               placeholder="New Password"
               icon={FiLock}
               ref={register}
-              isDirty={isDirty}
               error={errors.password}
+              containerStyle={{ marginTop: 24 }}
             />
 
             <Input
               type="password"
               name="password_confirmation"
-              placeholder="Confirm new password"
+              placeholder="Confirm Password"
               icon={FiLock}
               ref={register}
-              isDirty={isDirty}
-              error={errors.password}
+              error={errors.password_confirmation}
             />
 
             <Button type="submit">Update my Profile</Button>

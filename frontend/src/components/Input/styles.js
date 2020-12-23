@@ -22,13 +22,6 @@ export const Container = styled.div`
   }
 
   ${(props) =>
-    props.error &&
-    css`
-      border-color: var(--error);
-      color: var(--error);
-    `}
-
-  ${(props) =>
     props.isFocused &&
     css`
       border-color: var(--primary);
@@ -36,9 +29,10 @@ export const Container = styled.div`
     `}
 
   ${(props) =>
-    props.isFilled &&
+    props.error &&
     css`
-      color: var(--primary);
+      border-color: var(--error);
+      color: var(--error);
     `}
 `;
 

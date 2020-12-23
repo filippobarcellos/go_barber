@@ -17,7 +17,7 @@ exports.createSession = async (req, res) => {
     return res.status(401).json({ error: 'Incorrect email/password' });
   }
 
-  const { id, name } = user;
+  const { id, name, avatar } = user;
 
   const token = jwt.sign({ id }, authConfig.secret, {
     expiresIn: authConfig.expiresIn,
@@ -28,6 +28,7 @@ exports.createSession = async (req, res) => {
       id,
       name,
       email,
+      avatar,
     },
     token,
   });

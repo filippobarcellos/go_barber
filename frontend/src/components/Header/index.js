@@ -16,8 +16,9 @@ function Header() {
         <S.Profile>
           <img
             src={
-              user.avatar_url ||
-              `https://eu.ui-avatars.com/api/?name=${user.name}`
+              user.avatar
+                ? `http://localhost:3333/files/${user.avatar}`
+                : `https://eu.ui-avatars.com/api/?name=${user.name}`
             }
             alt={user.name}
           />

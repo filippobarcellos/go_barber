@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { shade } from 'polished';
-import background from '../../assets/background.png';
+import background from '../../../assets/background.png';
 
 export const Container = styled.div`
   height: 100vh;
@@ -31,33 +31,33 @@ export const Content = styled.div`
       margin-right: 6px;
     }
   }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 80px 0;
+    width: 340px;
+
+    h2 {
+      margin-bottom: 24px;
+    }
+
+    a {
+      margin-top: 24px;
+      display: block;
+      color: var(--text);
+      transition: 0.2 color;
+
+      &:hover {
+        color: ${shade(0.2, '#f4ede8')};
+      }
+    }
+  }
 `;
 
 export const Background = styled.div`
   flex: 1;
   background: url(${background}) no-repeat center;
   background-size: cover;
-`;
-
-export const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  margin: 80px 0;
-  width: 340px;
-
-  h2 {
-    margin-bottom: 24px;
-  }
-
-  a {
-    margin-top: 24px;
-    display: block;
-    color: var(--text);
-    transition: 0.2 color;
-
-    &:hover {
-      color: ${shade(0.2, '#f4ede8')};
-    }
-  }
 `;

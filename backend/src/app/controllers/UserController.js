@@ -13,18 +13,21 @@ exports.createUser = async (req, res) => {
     throw new Error('User already exist');
   }
 
-  const { _id, name } = await User.create(req.body);
+  const user = await User.create(req.body);
+
+  const { _id, name, avatar } = user;
 
   return res.json({
     _id,
     name,
     email,
+    avatar,
   });
 };
 
 exports.updateAvatar = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).select('-password');
 
     if (!user) {
       throw new Error('Only authenticated users can change avatar');
@@ -51,7 +54,7 @@ exports.updateAvatar = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const { email, oldPassword } = req.body;
+  const { email } = req.body;
 
   const user = await User.findById(req.userId);
 
@@ -67,14 +70,12 @@ exports.updateUser = async (req, res) => {
     }
   }
 
-  if (oldPassword && !(await user.checkPassword(oldPassword))) {
-    return res.status(401).json({ error: 'Password does not match' });
-  }
+  const { id, name, avatar } = await user.updateOne(req.body);
 
-  const { id, name } = await user.updateOne(req.body);
   return res.json({
     id,
     name,
     email,
+    avatar,
   });
 };

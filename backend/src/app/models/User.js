@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import localhostConfig from '../../config/localhost';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -34,7 +33,7 @@ UserSchema.methods.checkPassword = function (requestedPassword) {
 };
 
 UserSchema.virtual('avatar_url').get(function () {
-  return `http://${localhostConfig.LOCALHOST}:3333/files/${this.avatar}`;
+  return `http://localhost:3333/files/${this.avatar}`;
 });
 
 export default mongoose.model('User', UserSchema);

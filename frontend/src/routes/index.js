@@ -11,6 +11,7 @@ function Routes() {
     <Switch>
       <Route path="/" exact component={Login} />
       <Route path="/register" component={Register} />
+
       <Route path="/dashboard" component={Dashboard} isPrivate />
       <Route path="/profile" component={Profile} isPrivate />
     </Switch>

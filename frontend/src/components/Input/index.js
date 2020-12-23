@@ -3,27 +3,20 @@ import { FiAlertCircle } from 'react-icons/fi';
 import * as S from './styles';
 
 const Input = forwardRef((props, ref) => {
-  const { icon: Icon, type, placeholder, name, error, isDirty } = props;
+  const { icon: Icon, type, placeholder, name, error } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-  const [isFilled, setIsFilled] = useState(false);
-
-  const handleFocus = () => {
-    setIsFocused(false);
-    setIsFilled(!!isDirty);
-  };
 
   return (
     <S.Container
       isFocused={isFocused}
-      isFilled={isFilled}
       error={error}
       style={props.containerStyle}
     >
       {Icon && <Icon size={20} />}
       <S.Input
         onFocus={() => setIsFocused(true)}
-        onBlur={handleFocus}
+        onBlur={() => setIsFocused(false)}
         name={name}
         type={type}
         placeholder={placeholder}
