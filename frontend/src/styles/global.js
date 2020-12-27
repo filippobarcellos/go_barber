@@ -36,8 +36,10 @@ export default createGlobalStyle`
     --secondary: #312E38;
     --grey: #232129;
     --text: #f4ede8;
+    --textGrey: #999591;
     --placeholder: #666360;
     --error: #c53030;
     --darkGrey: #26282d;
+    --shape: #3E3B47;
   }
 `;
