@@ -5,6 +5,8 @@ import routes from './routes';
 import connection from './config/database';
 import uploadConfig from './config/upload';
 
+require('dotenv').config();
+
 const app = express();
 
 // connect database

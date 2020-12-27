@@ -6,14 +6,20 @@ const AppointmentsSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    provider: {
-      type: String,
+    user: {
+      type: mongoose.Schema.ObjectId,
       required: true,
+      ref: 'users',
+    },
+    provider: {
+      type: mongoose.Schema.ObjectId,
+      required: true,
+      ref: 'users',
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default mongoose.model('Appointment', AppointmentsSchema);
