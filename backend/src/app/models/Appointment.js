@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const AppointmentsSchema = new mongoose.Schema(
+const AppointmentSchema = new mongoose.Schema(
   {
     date: {
       type: Date,
@@ -9,12 +9,12 @@ const AppointmentsSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       required: true,
-      ref: 'users',
+      ref: 'User',
     },
     provider: {
       type: mongoose.Schema.ObjectId,
       required: true,
-      ref: 'users',
+      ref: 'User',
     },
   },
   {
@@ -22,4 +22,4 @@ const AppointmentsSchema = new mongoose.Schema(
   },
 );
 
-export default mongoose.model('Appointment', AppointmentsSchema);
+export default mongoose.model('Appointment', AppointmentSchema);
