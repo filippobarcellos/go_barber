@@ -10,7 +10,7 @@ import AppointmentController from './app/controllers/AppointmentController';
 import ProviderController from './app/controllers/ProviderController';
 import ScheduleController from './app/controllers/ScheduleController';
 import NotificationController from './app/controllers/NotificationController';
-import Notification from './app/models/Notification';
+import AvailabilityController from './app/controllers/AvailabilityController';
 
 const upload = multer(uploadConfig);
 const routes = Router();
@@ -20,7 +20,7 @@ routes.post('/users', UserController.store);
 routes.patch('/avatar', auth, upload.single('avatar'), UserController.update);
 
 // SESSION ROUTES
-routes.post('sessions', SessionController.store);
+routes.post('/sessions', SessionController.store);
 
 routes.use(auth);
 
@@ -30,6 +30,7 @@ routes.get('/appointments', AppointmentController.index);
 
 // PROVIDER ROUTES
 routes.get('/providers', ProviderController.index);
+routes.get('/providers/:id/availability', AvailabilityController.index);
 
 // SCHEDULE ROUTES
 routes.get('/schedule', ScheduleController.index);
