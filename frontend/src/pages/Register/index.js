@@ -33,7 +33,7 @@ function Register() {
         password: data.password,
       });
 
-      toast.error('User has been created. Please Login');
+      toast.success('User has been created. Please Login');
 
       history.push('/');
     } catch (error) {

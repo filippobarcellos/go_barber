@@ -1,19 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { FiClock } from 'react-icons/fi';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
+import api from '../../services/api';
+import { useAuth } from '../../context/useAuth';
 import * as S from './styles';
 
 import Header from '../../components/Header';
-import { FiClock } from 'react-icons/fi';
 
 function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const { user } = useAuth();
 
   const handleDateChange = (day, modifiers) => {
     if (modifiers.available) {
       setSelectedDate(day);
     }
   };
+
+  const handleMonthChange = (month) => {
+    setCurrentMonth(month);
+  };
+
+  useEffect(() => {
+    api.get(`providers/${user.id}/availability`, {
+      params: {
+        year: currentMonth.getFullYear(),
+        month: currentMonth.getMonth(),
+      },
+    });
+  }, [user.id, currentMonth]);
 
   return (
     <>
@@ -118,6 +136,7 @@ function Dashboard() {
             modifiers={{ available: { daysOfWeek: [1, 2, 3, 4, 5] } }}
             onDayClick={handleDateChange}
             selectedDays={selectedDate}
+            onMonthChange={handleMonthChange}
           />
         </S.Calendar>
       </S.Main>

@@ -1,33 +1,38 @@
-import { startOfMonth, endOfMonth, getHours } from 'date-fns';
+import {
+  startOfMonth,
+  endOfMonth,
+  getDate,
+  getDaysInMonth,
+  parseISO,
+} from 'date-fns';
 import Appointment from '../models/Appointment';
 
 class AvailabilityController {
   async index(req, res) {
-    const { date } = req.query;
+    const { year, month } = req.query;
 
-    if (!date) {
-      return res.status(400).json({ error: 'Invalid date' });
-    }
-
-    const searchDate = Number(date);
+    const parsedDate = parseISO(year, month);
 
     const appointments = await Appointment.find({
-      provider: req.id,
-      date: { $gte: startOfMonth(searchDate), $lt: endOfMonth(searchDate) },
+      provider: req.params.id,
+      date: { $gte: startOfMonth(parsedDate), $lt: endOfMonth(parsedDate) },
     });
 
-    const hourStart = 8;
+    const numberOfDaysinMonth = getDaysInMonth(new Date(year, month - 1));
 
-    const eachHourArray = Array.from(
-      { length: 10 },
-      (_, index) => index + hourStart,
+    const monthArray = Array.from(
+      { length: numberOfDaysinMonth },
+      (value, index) => index + 1,
     );
 
-    const availability = eachHourArray.map((hour) => {
-      const hasAppointmentInHour = appointments.find(
-        (appointment) => getHours(appointment.date) === hour,
+    const availability = monthArray.map((day) => {
+      const appointmentsInDay = appointments.filter(
+        (appointment) => getDate(appointment.date) === day,
       );
-      return { hour, available: !hasAppointmentInHour };
+      return {
+        day,
+        available: appointmentsInDay.length < 10,
+      };
     });
 
     return res.json(availability);

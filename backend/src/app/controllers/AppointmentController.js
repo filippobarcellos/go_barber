@@ -1,11 +1,4 @@
-import {
-  startOfHour,
-  parseISO,
-  isBefore,
-  getHours,
-  getDate,
-  format,
-} from 'date-fns';
+import { startOfHour, parseISO, isBefore, format } from 'date-fns';
 import User from '../models/User';
 import Appointment from '../models/Appointment';
 import Notification from '../models/Notification';
@@ -82,49 +75,3 @@ class AppointmentController {
 }
 
 export default new AppointmentController();
-
-//   async index(req, res) {
-//     try {
-//       const { provider, date } = req.body;
-
-//       const isProvider = await User.findOne({
-//         _id: provider,
-//         provider: true,
-//       });
-
-//       if (!isProvider) {
-//         return res.status(401).json({
-//           error: 'You are not a provider. Please check your credentials',
-//         });
-//       }
-
-//       const parsedDate = parseISO(date);
-
-//       const appointments = await Appointment.find({
-//         user: req.userId,
-//         provider,
-//         date: { $gte: startOfMonth(parsedDate), $lt: endOfMonth(parsedDate) },
-//       });
-
-//       const hourStart = 8;
-
-//       const eachHourArray = Array.from(
-//         { length: 10 },
-//         (_, index) => index + hourStart,
-//       );
-
-//       const availability = eachHourArray.map((hour) => {
-//         const hasAppointmentInHour = appointments.find(
-//           (appointment) => getHours(appointment.date) === hour,
-//         );
-//         return {
-//           hour,
-//           available: !hasAppointmentInHour,
-//         };
-//       });
-//       return res.json(availability);
-//     } catch (error) {
-//       return res.status(500).json({ error: 'Server error' });
-//     }
-//   }
-// }
