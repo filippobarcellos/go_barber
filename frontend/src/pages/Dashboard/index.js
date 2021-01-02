@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FiClock } from 'react-icons/fi';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
+import { format } from 'date-fns';
 import api from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 import * as S from './styles';
@@ -11,6 +12,8 @@ import Header from '../../components/Header';
 function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [monthAvailability, setMonthAvailability] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   const { user } = useAuth();
 
@@ -25,13 +28,45 @@ function Dashboard() {
   };
 
   useEffect(() => {
-    api.get(`providers/${user.id}/availability`, {
-      params: {
-        year: currentMonth.getFullYear(),
-        month: currentMonth.getMonth(),
-      },
-    });
+    api
+      .get(`providers/${user.id}/availability`, {
+        params: {
+          year: currentMonth.getFullYear(),
+          month: currentMonth.getMonth(),
+        },
+      })
+      .then((response) => setMonthAvailability(response.data));
   }, [user.id, currentMonth]);
+
+  useEffect(() => {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth() + 1;
+    const day = selectedDate.getDate();
+
+    api
+      .get(`/schedule`, {
+        params: {
+          date: new Date(year, month, day),
+        },
+      })
+      .then((response) => setAppointments(response.data));
+  }, [selectedDate]);
+
+  const disableDays = useMemo(() => {
+    const dates = monthAvailability
+      .filter((monthDay) => monthDay.available === false)
+      .map((monthDay) => {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+        return new Date(year, month, monthDay.day);
+      });
+
+    return dates;
+  }, [currentMonth, monthAvailability]);
+
+  const selectedDayAsText = useMemo(() => {
+    return format(selectedDate, 'do MMMM');
+  }, [selectedDate]);
 
   return (
     <>
@@ -39,8 +74,9 @@ function Dashboard() {
       <S.Main>
         <S.Schedule>
           <S.Header>
-            <h2>Today's Schedule</h2>
-            <span>Today | 6th Monday</span>
+            {console.log(appointments)}
+            <h2>Schedule</h2>
+            <span>{selectedDayAsText}</span>
           </S.Header>
 
           <S.NextAppointment>
@@ -132,6 +168,7 @@ function Dashboard() {
               {
                 daysOfWeek: [0, 6],
               },
+              ...disableDays,
             ]}
             modifiers={{ available: { daysOfWeek: [1, 2, 3, 4, 5] } }}
             onDayClick={handleDateChange}

@@ -10,9 +10,8 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('@gobarber:token');
     const user = localStorage.getItem('@gobarber:user');
 
-    api.defaults.headers.Authorization = `Bearer ${token}`;
-
     if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
       return { token, user: JSON.parse(user) };
     }
 
@@ -27,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
     const { token, user } = response.data;
 
-    api.defaults.headers.Authorization = `Bearer ${token}`;
+    api.defaults.headers.authorization = `Bearer ${token}`;
 
     localStorage.setItem('@gobarber:token', token);
     localStorage.setItem('@gobarber:user', JSON.stringify(user));
