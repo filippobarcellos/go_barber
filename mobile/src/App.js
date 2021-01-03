@@ -1,8 +1,17 @@
 import React from 'react';
-import {View} from 'react-native';
+import { View, StatusBar } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import Routes from './routes';
 
 const App = () => {
-  return <View />;
+  return (
+    <NavigationContainer>
+      <StatusBar barStyle="light-content" backgroundColor="#312e32" />
+      <View style={{ flex: 1, backgroundColor: '#312e32' }}>
+        <Routes />
+      </View>
+    </NavigationContainer>
+  );
 };
 
 export default App;
