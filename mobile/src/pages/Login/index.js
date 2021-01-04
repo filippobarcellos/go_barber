@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useForm } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Feather';
 
 import logoImg from '../../assets/logo.png';
@@ -17,7 +18,10 @@ import Button from '../../components/Button';
 import * as S from './styles';
 
 const Login = () => {
+  const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
+
+  const onSubmit = (data) => console.log(data);
 
   return (
     <>
@@ -37,9 +41,19 @@ const Login = () => {
               <S.Title>Login</S.Title>
             </View>
 
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Password" />
-            <Button>Login</Button>
+            <Input
+              name="email"
+              icon="mail"
+              placeholder="E-mail"
+              control={control}
+            />
+            <Input
+              name="password"
+              icon="lock"
+              placeholder="Password"
+              control={control}
+            />
+            <Button onPress={handleSubmit(onSubmit)}>Login</Button>
           </S.Container>
         </ScrollView>
       </KeyboardAvoidingView>

@@ -1,17 +1,26 @@
 import React from 'react';
+import { Controller } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Feather';
 
 import * as S from './styles';
 
-const Input = ({ name, icon, ...rest }) => {
+const Input = ({ name, icon, control, ...rest }) => {
   return (
     <S.Container>
       <Icon name={icon} size={20} color="#666360" />
-
-      <S.Input
-        keyboardAppearance="dark"
-        placeholderTextColor="#666360"
-        {...rest}
+      <Controller
+        name={name}
+        defaultValue=""
+        control={control}
+        render={({ onChange, value }) => (
+          <S.Input
+            onChangeText={(value) => onChange(value)}
+            value={value}
+            keyboardAppearance="dark"
+            placeholderTextColor="#666360"
+            {...rest}
+          />
+        )}
       />
     </S.Container>
   );
