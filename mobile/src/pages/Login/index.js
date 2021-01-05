@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   Image,
   View,
@@ -20,6 +20,8 @@ import * as S from './styles';
 const Login = () => {
   const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
+  const passwordInputRef = useRef(null);
+  const emailInputref = useRef(null);
 
   const onSubmit = (data) => console.log(data);
 
@@ -42,16 +44,22 @@ const Login = () => {
             </View>
 
             <Input
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
               name="email"
               icon="mail"
               placeholder="E-mail"
               control={control}
+              returnKeyType="next"
             />
+
             <Input
               name="password"
               icon="lock"
               placeholder="Password"
               control={control}
+              secureTextEntry
             />
             <Button onPress={handleSubmit(onSubmit)}>Login</Button>
           </S.Container>

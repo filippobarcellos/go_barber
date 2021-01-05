@@ -22,7 +22,7 @@ class ScheduleController {
       const appointments = await Appointment.find({
         provider: req.userId,
         date: { $gte: startOfDay(parsedDate), $lt: endOfDay(parsedDate) },
-      });
+      }).populate('user');
 
       return res.json(appointments);
     } catch (error) {

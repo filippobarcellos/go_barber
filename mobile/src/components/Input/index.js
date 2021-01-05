@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 
 import * as S from './styles';
 
-const Input = ({ name, icon, control, ...rest }) => {
+const Input = ({ name, icon, control, ...rest }, ref) => {
   return (
     <S.Container>
       <Icon name={icon} size={20} color="#666360" />

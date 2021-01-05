@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useForm } from 'react-hook-form';
 import Icon from 'react-native-vector-icons/Feather';
 
 import logoImg from '../../assets/logo.png';
@@ -17,6 +18,7 @@ import Button from '../../components/Button';
 import * as S from './styles';
 
 const Register = () => {
+  const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
 
   return (
@@ -37,9 +39,30 @@ const Register = () => {
               <S.Title>Create your Account</S.Title>
             </View>
 
-            <Input name="user" icon="user" placeholder="User" />
-            <Input name="email" icon="mail" placeholder="E-mail" />
-            <Input name="password" icon="lock" placeholder="Password" />
+            <Input
+              autoCorrect={false}
+              autoCapitalize="none"
+              name="user"
+              icon="user"
+              placeholder="User"
+              control={control}
+            />
+            <Input
+              autoCorrect={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              name="email"
+              icon="mail"
+              placeholder="E-mail"
+              control={control}
+            />
+            <Input
+              name="password"
+              icon="lock"
+              placeholder="Password"
+              control={control}
+              secureTextEntry
+            />
 
             <Button>Register</Button>
           </S.Container>

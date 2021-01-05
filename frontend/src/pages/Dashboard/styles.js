@@ -5,7 +5,7 @@ import ArrowRightIcon from '../../assets/ArrowRight.svg';
 
 export const Main = styled.main`
   max-width: 1120px;
-  margin: 64px auto;
+  margin: 54px auto;
   display: flex;
 `;
 
@@ -40,7 +40,7 @@ export const NextAppointment = styled.div`
     background: var(--shape);
     border-radius: 10px;
     align-items: center;
-    padding: 16px 24px;
+    padding: 14px 20px;
     margin-top: 24px;
     position: relative;
     display: flex;

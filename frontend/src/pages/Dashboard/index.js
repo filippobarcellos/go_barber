@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { FiClock } from 'react-icons/fi';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-import { format } from 'date-fns';
+import { format, parseISO, isToday, isAfter } from 'date-fns';
 import api from '../../services/api';
 import { useAuth } from '../../context/useAuth';
 import * as S from './styles';
@@ -39,8 +39,9 @@ function Dashboard() {
   }, [user.id, currentMonth]);
 
   useEffect(() => {
+    setAppointments([]);
     const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth() + 1;
+    const month = selectedDate.getMonth();
     const day = selectedDate.getDate();
 
     api
@@ -49,7 +50,15 @@ function Dashboard() {
           date: new Date(year, month, day),
         },
       })
-      .then((response) => setAppointments(response.data));
+      .then((response) => {
+        const appointmentsFormatted = response.data.map((appointment) => {
+          return {
+            ...appointment,
+            hourFormatted: format(parseISO(appointment.date), 'HH:mm'),
+          };
+        });
+        setAppointments(appointmentsFormatted);
+      });
   }, [selectedDate]);
 
   const disableDays = useMemo(() => {
@@ -68,104 +77,113 @@ function Dashboard() {
     return format(selectedDate, 'do MMMM');
   }, [selectedDate]);
 
+  const morningAppointments = useMemo(() => {
+    return appointments.filter((a) => {
+      return parseISO(a.date).getHours() < 12;
+    });
+  }, [appointments]);
+
+  const afternoonAppointments = useMemo(() => {
+    return appointments.filter((a) => {
+      return parseISO(a.date).getHours() >= 12;
+    });
+  }, [appointments]);
+
+  const nextAppointment = useMemo(() => {
+    return appointments.find((a) => isAfter(parseISO(a.date), new Date()));
+  }, [appointments]);
+
   return (
     <>
       <Header />
       <S.Main>
         <S.Schedule>
           <S.Header>
-            {console.log(appointments)}
             <h2>Schedule</h2>
             <span>{selectedDayAsText}</span>
           </S.Header>
 
-          <S.NextAppointment>
-            <span>Next Appointment</span>
+          {isToday(selectedDate) && nextAppointment && (
+            <S.NextAppointment>
+              <span>Next Appointment</span>
 
-            <div>
-              <img
-                src="https://avatars0.githubusercontent.com/u/56128203?s=460&u=9e5f0f57bd59aba31c947d38307cedb30e0f0ebe&v=4"
-                alt="Filippo"
-              />
-              <strong>Filippo Barcellos</strong>
-              <span>
-                <FiClock />
-                08:00
-              </span>
-            </div>
-          </S.NextAppointment>
+              <div>
+                <img
+                  src={nextAppointment.user.avatar_url}
+                  alt={nextAppointment.user.name}
+                />
+                <strong>{nextAppointment.user.name}</strong>
+                <span>
+                  <FiClock />
+                  {nextAppointment.hourFormatted}
+                </span>
+              </div>
+            </S.NextAppointment>
+          )}
 
           <S.Appointments>
             <span>Morning</span>
 
-            <S.SingleAppoinment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
+            {morningAppointments.length === 0 && (
+              <p>
+                There's no appointments for this morning. Enjoy your free time.
+                😀
+              </p>
+            )}
 
-              <div>
-                <img
-                  src="https://avatars0.githubusercontent.com/u/56128203?s=460&u=9e5f0f57bd59aba31c947d38307cedb30e0f0ebe&v=4"
-                  alt="Filippo"
-                />
-                <strong>Filippo Barcellos</strong>
-              </div>
-            </S.SingleAppoinment>
-            <S.SingleAppoinment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
+            {morningAppointments.map((appointment) => (
+              <S.SingleAppoinment>
+                <span>
+                  <FiClock />
+                  {appointment.hourFormatted}
+                </span>
 
-              <div>
-                <img
-                  src="https://avatars0.githubusercontent.com/u/56128203?s=460&u=9e5f0f57bd59aba31c947d38307cedb30e0f0ebe&v=4"
-                  alt="Filippo"
-                />
-                <strong>Filippo Barcellos</strong>
-              </div>
-            </S.SingleAppoinment>
+                <div>
+                  <img
+                    src={appointment.user.avatar_url}
+                    alt={appointment.user.name}
+                  />
+                  <strong>{appointment.user.name}</strong>
+                </div>
+              </S.SingleAppoinment>
+            ))}
           </S.Appointments>
 
           <S.Appointments>
             <span>Afternoon</span>
 
-            <S.SingleAppoinment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
+            {afternoonAppointments.length === 0 && (
+              <p>
+                There's no appointments for this afternoon. Enjoy your free
+                time.😀
+              </p>
+            )}
 
-              <div>
-                <img
-                  src="https://avatars0.githubusercontent.com/u/56128203?s=460&u=9e5f0f57bd59aba31c947d38307cedb30e0f0ebe&v=4"
-                  alt="Filippo"
-                />
-                <strong>Filippo Barcellos</strong>
-              </div>
-            </S.SingleAppoinment>
-            <S.SingleAppoinment>
-              <span>
-                <FiClock />
-                08:00
-              </span>
+            {afternoonAppointments.map((appointment, i) => (
+              <S.SingleAppoinment key={i}>
+                <span>
+                  <FiClock />
+                  {appointment.hourFormatted}
+                </span>
 
-              <div>
-                <img
-                  src="https://avatars0.githubusercontent.com/u/56128203?s=460&u=9e5f0f57bd59aba31c947d38307cedb30e0f0ebe&v=4"
-                  alt="Filippo"
-                />
-                <strong>Filippo Barcellos</strong>
-              </div>
-            </S.SingleAppoinment>
+                <div>
+                  <img
+                    src={appointment.user.avatar_url}
+                    alt={appointment.user.name}
+                  />
+                  <strong>{appointment.user.name}</strong>
+                </div>
+              </S.SingleAppoinment>
+            ))}
           </S.Appointments>
         </S.Schedule>
+
         <S.Calendar>
           <DayPicker
             fromMonth={new Date()}
             disabledDays={[
               {
+                before: new Date(),
                 daysOfWeek: [0, 6],
               },
               ...disableDays,

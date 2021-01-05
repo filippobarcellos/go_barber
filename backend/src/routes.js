@@ -17,7 +17,12 @@ const routes = Router();
 
 // USER ROUTES
 routes.post('/users', UserController.store);
-routes.patch('/avatar', auth, upload.single('avatar'), UserController.update);
+routes.patch(
+  '/users/avatar',
+  auth,
+  upload.single('avatar'),
+  UserController.update,
+);
 
 // SESSION ROUTES
 routes.post('/sessions', SessionController.store);
