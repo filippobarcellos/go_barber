@@ -6,6 +6,7 @@ import auth from './app/middlewares/auth';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
+import AvatarController from './app/controllers/AvatarController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ProviderController from './app/controllers/ProviderController';
 import ScheduleController from './app/controllers/ScheduleController';
@@ -17,11 +18,14 @@ const routes = Router();
 
 // USER ROUTES
 routes.post('/users', UserController.store);
+routes.put('/users', auth, UserController.update);
+
+// AVATAR ROUTES
 routes.patch(
   '/users/avatar',
   auth,
   upload.single('avatar'),
-  UserController.update,
+  AvatarController.update,
 );
 
 // SESSION ROUTES

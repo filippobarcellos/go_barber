@@ -1,7 +1,7 @@
-import { useAuth } from '../../context/useAuth';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useAuth } from '../../context/useAuth';
 import { FiMail, FiLock, FiUser, FiCamera, FiArrowLeft } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
@@ -51,9 +51,11 @@ function Profile() {
     );
 
     try {
-      console.log(formData);
+      const response = await api.put('/users', formData);
+      updateUser(response.data);
+      toast.success('User has been updated.');
     } catch (error) {
-      toast.error('Something went wrong. Please check your credentials');
+      toast.error('Something went wrong. Please try again.');
     }
   };
 

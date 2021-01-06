@@ -1,8 +1,4 @@
-import path from 'path';
-import fs from 'fs';
 import User from '../models/User';
-
-import uploadConfig from '../../config/upload';
 
 class UserController {
   async store(req, res) {
@@ -32,61 +28,31 @@ class UserController {
 
   async update(req, res) {
     try {
-      const user = await User.findById(req.userId).select('-password');
+      const { email } = req.body;
+
+      const user = await User.findById(req.userId);
 
       if (!user) {
-        throw new Error('Only authenticated users can change avatar');
+        return res.status(400).json({ error: 'User was not found.' });
       }
 
-      if (user.avatar) {
-        // remove previous avatar
-        const userAvatarFilePath = path.join(
-          uploadConfig.directory,
-          user.avatar,
-        );
-        const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
+      if (user !== email) {
+        const userExists = await User.findOne({ email });
 
-        if (userAvatarFileExists) {
-          await fs.promises.unlink(userAvatarFilePath);
+        if (!userExists) {
+          return res.status(400).json({ error: 'User already exists.' });
         }
       }
 
-      user.avatar = req.file.filename;
+      const userUpdated = await User.findOneAndUpdate(req.userId, req.body, {
+        new: true,
+      });
 
-      await user.save();
-
-      return res.json(user);
-    } catch (err) {
-      return res.status(400).json({ error: err.message });
+      return res.json(userUpdated);
+    } catch (error) {
+      console.log(error.message);
     }
   }
 }
 
 export default new UserController();
-
-// exports.updateUser = async (req, res) => {
-//   const { email } = req.body;
-
-//   const user = await User.findById(req.userId);
-
-//   if (!user) {
-//     return res.status(400).json({ error: 'User was not found' });
-//   }
-
-//   if (email !== user.email) {
-//     const userExists = await User.findOne({ email });
-
-//     if (userExists) {
-//       return res.status(400).json({ error: 'User already exists' });
-//     }
-//   }
-
-//   const { id, name, avatar } = await user.updateOne(req.body);
-
-//   return res.json({
-//     id,
-//     name,
-//     email,
-//     avatar,
-//   });
-// };
