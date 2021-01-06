@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Image,
   View,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import api from '../../services/api';
 import Icon from 'react-native-vector-icons/Feather';
 
 import logoImg from '../../assets/logo.png';
@@ -17,9 +19,37 @@ import Button from '../../components/Button';
 
 import * as S from './styles';
 
+const schema = Yup.object().shape({
+  name: Yup.string().required(),
+  email: Yup.string().email().required(),
+  password: Yup.string().required(),
+});
+
 const Register = () => {
-  const { control, handleSubmit } = useForm();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
   const navigation = useNavigation();
+
+  const handleSubmit = async (name, email, password) => {
+    try {
+      const data = { name, email, password };
+      await schema.validate(data, { abortEarly: false });
+      await api.post('/users', data);
+
+      Alert.alert('You account was created. Please login.');
+
+      navigation.navigate('Login');
+    } catch (err) {
+      Alert.alert(
+        'Register Error',
+        'Something is wrong. Please check your credentials.'
+      );
+    }
+  };
 
   return (
     <>
@@ -42,10 +72,12 @@ const Register = () => {
             <Input
               autoCorrect={false}
               autoCapitalize="none"
-              name="user"
+              name="name"
               icon="user"
-              placeholder="User"
-              control={control}
+              placeholder="User Name"
+              returnKeyType="next"
+              onChangeText={(text) => setName(text)}
+              onSubmitEditing={() => emailInputRef.current.focus()}
             />
             <Input
               autoCorrect={false}
@@ -54,17 +86,23 @@ const Register = () => {
               name="email"
               icon="mail"
               placeholder="E-mail"
-              control={control}
+              ref={emailInputRef}
+              returnKeyType="next"
+              onChangeText={(text) => setEmail(text)}
+              onSubmitEditing={() => passwordInputRef.current.focus()}
             />
             <Input
               name="password"
               icon="lock"
               placeholder="Password"
-              control={control}
               secureTextEntry
+              ref={passwordInputRef}
+              onChangeText={(text) => setPassword(text)}
             />
 
-            <Button>Register</Button>
+            <Button onPress={() => handleSubmit(name, email, password)}>
+              Register
+            </Button>
           </S.Container>
         </ScrollView>
       </KeyboardAvoidingView>

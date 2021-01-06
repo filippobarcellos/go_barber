@@ -1,13 +1,15 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Image,
   View,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useForm } from 'react-hook-form';
+import * as Yup from 'yup';
+import { useAuth } from '../../context/useAuth';
 import Icon from 'react-native-vector-icons/Feather';
 
 import logoImg from '../../assets/logo.png';
@@ -18,12 +20,31 @@ import Button from '../../components/Button';
 import * as S from './styles';
 
 const Login = () => {
-  const { control, handleSubmit } = useForm();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const passwordInputRef = useRef();
   const navigation = useNavigation();
-  const passwordInputRef = useRef(null);
-  const emailInputref = useRef(null);
+  const { login, user } = useAuth();
 
-  const onSubmit = (data) => console.log(data);
+  const schema = Yup.object().shape({
+    email: Yup.string().email().required(),
+    password: Yup.string().required(),
+  });
+
+  const onSubmit = async (email, password) => {
+    try {
+      const data = { email, password };
+      await schema.validate(data, { abortEarly: false });
+
+      await login({ email, password });
+    } catch (err) {
+      console.log(err.message);
+      Alert.alert(
+        'Login error',
+        'Something is wrong. Please check your credentials.'
+      );
+    }
+  };
 
   return (
     <>
@@ -48,20 +69,25 @@ const Login = () => {
               autoCapitalize="none"
               keyboardType="email-address"
               name="email"
+              value={email}
               icon="mail"
               placeholder="E-mail"
-              control={control}
+              onChangeText={(text) => setEmail(text)}
               returnKeyType="next"
+              onSubmitEditing={() => passwordInputRef.current.focus()}
             />
 
             <Input
+              ref={passwordInputRef}
               name="password"
               icon="lock"
               placeholder="Password"
-              control={control}
+              returnKeyType="send"
               secureTextEntry
+              onChangeText={(text) => setPassword(text)}
             />
-            <Button onPress={handleSubmit(onSubmit)}>Login</Button>
+
+            <Button onPress={() => onSubmit(email, password)}>Login</Button>
           </S.Container>
         </ScrollView>
       </KeyboardAvoidingView>
